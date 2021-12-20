@@ -13,8 +13,9 @@ date(){
     }
 },
 methods:{
+    // 退出登陆
     logout(){
-        window.sessionStorage.clear()
+        window.sessionStorage.clear() //清空token
         this.$router.push('/login')
     }
 }
