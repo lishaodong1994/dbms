@@ -6,6 +6,8 @@ const http = axios.create({
     //headers:''
 })
 http.interceptors.request.use((config) => {
+    config.headers.Authorization = window.sessionStorage.getItem('token')
+    // console.log(config);
     return config
 })
 http.interceptors.response.use(
