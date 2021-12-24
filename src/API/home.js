@@ -16,3 +16,7 @@ export const G_getUserData = (id)=>http.get(`/users/${id}`)
 export const P_eidtUserData = (id,email,mobile)=>http.put('/users/'+id,{email,mobile})
 // 用户列表->删除用户
 export const D_delUser = (id)=>http.delete('/users/'+id)
+// 权限列表 ->获取权限列表
+export const G_getRightsList = (type)=>http.get(`/rights/${type}`)
+// 角色列表 ->获取角色列表
+export const G_getRolesList = ()=>http.get('/roles')
