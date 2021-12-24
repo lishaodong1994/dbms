@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { P_login } from "@/API/login";
+import { P_login } from "@/API/home";
 export default {
   data() {
     return {
