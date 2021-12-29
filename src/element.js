@@ -59,3 +59,4 @@ Vue.use(Dialog)
 
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm
+// 我加了点没用的内容上去~~~
