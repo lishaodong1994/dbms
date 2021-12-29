@@ -66,6 +66,7 @@
               content="分配角色"
               placement="top"
               :enterable="false"
+              @click=""
             >
               <el-button
                 type="warning"
@@ -146,6 +147,8 @@
         >
       </span>
     </el-dialog>
+    <!-- 分配角色的对话框 -->
+    
 
   </div>
 </template>
