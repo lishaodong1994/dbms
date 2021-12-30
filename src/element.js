@@ -27,7 +27,8 @@ import {
     Dialog,
     MessageBox,
     Tag,
-    Tree
+    Tree,
+    Option,
 } from 'element-ui';
 
 
@@ -35,6 +36,7 @@ import {
 // 安装@babel/preset-env 将.babelrc的配置es2015  改成 @babel/preset-env 即可。......
 Vue.use(Button)
 Vue.use(Select)
+Vue.use(Option)
 Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Input)
