@@ -25,8 +25,8 @@
           </el-input>
         </el-col>
         <el-col :span="4">
-          <el-button type="primary"  @click="dialogVisible = true">添加用户</el-button>
-        </el-col>
+          <el-button type="primary"  @click="addDialogVisible = true">添加用户</el-button>
+        </el-col> 
       </el-row>
       <!-- 用户列表表格区域 -->
       <el-table :data="userList" :border="true" :stripe="true">
@@ -71,6 +71,7 @@
                 type="warning"
                 icon="el-icon-s-tools"
                 size="mini"
+                 @click="setupUser(msg.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -88,6 +89,7 @@
       >
       </el-pagination>
     </el-card>
+    <!-- -------------------------------------------------- -->
     <!-- 添加用户的对话框 -->
     <el-dialog
       title="添加用户"
@@ -146,12 +148,41 @@
         >
       </span>
     </el-dialog>
+    <!-- 分配角色的对话框 -->
+    <el-dialog
+      class="setupUserDialog"
+      title="分配角色"
+      :visible.sync="setupDialogVisible"
+      width="50%"
+      @closed="setupDialogClosedEvent"
+      >
+      <p><span>当前用户：</span><span>{{currentSetupUserInfo.username}}</span></p>
+      <p><span>当前的角色：</span><span>{{currentSetupUserInfo.role_name}}</span></p>
+      <p><span>分配新角色</span>
+      <!-- 分配角色的下拉菜单 -->
+        <el-select v-model="setupUserRoleId" placeholder="请选择">
+          <el-option
+            v-for="item in rolesList"
+            :key="item.id"
+            :label="item.roleName"
+            :value="item.id">
+          </el-option>
+        </el-select>
+       </p>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setupDialogVisible= false">取 消</el-button>
+        <el-button type="primary" @click="setupUserRole" >确 定</el-button>
+      </span>
+    </el-dialog>
 
   </div>
 </template>
 
 <script>
-import { G_getUserList, P_userSatateChange,P_addUser,G_getUserData,P_eidtUserData,D_delUser } from '@/API/home'
+import { 
+  G_getUserList, P_userSatateChange,P_addUser,
+  G_getUserData,P_eidtUserData,D_delUser,
+  G_getRolesList,P_setupUserRole } from '@/API/home'
 export default {
   data() {
     // 自定义添加用户名表单的校验规则：
@@ -218,11 +249,18 @@ export default {
           { validator: checkMobile, trigger: 'blur' },
         ],
       },
+      // 分配角色弹窗状态
+      setupDialogVisible:false,
+      currentSetupUserInfo:{},
+      rolesList:[],
+      setupUserRoleId:''  //分配角色ID
     }
   },
+
   mounted() {
     this.getUserList()
   },
+
   methods: {
     // 获取用户列表
     async getUserList() {
@@ -306,6 +344,27 @@ export default {
         }).catch(() => {
           this.$message({type: 'info',message: '已取消删除'});          
         });
+    },
+    //分配角色
+    async setupUser(msg){
+      this.currentSetupUserInfo.role_name = msg.role_name
+      this.currentSetupUserInfo.username = msg.username
+      this.currentSetupUserInfo.id = msg.id
+      const {data,meta}  = await G_getRolesList()
+      this.rolesList = data
+      this.setupDialogVisible=true
+    } ,
+    async setupUserRole(){
+      if(!this.setupUserRoleId){return this.$message.error('请选择用户角色！')}
+      const {data,meta} = await P_setupUserRole(this.currentSetupUserInfo.id,this.setupUserRoleId)
+      if(meta.status!==200){return this.$message.error('修改用户角色失败！')}
+      this.$message.success(meta.msg)
+      this.getUserList()
+      this.setupDialogVisible = false
+    },
+    setupDialogClosedEvent(){
+      this.setupUserRoleId='',
+      this.currentSetupUserInfo={}
     }
   },
 }
@@ -323,5 +382,11 @@ caption {
 }
 ::v-deep .cell {
   text-align: center;
+}
+.setupUserDialog p{
+  margin: 10px 0;
+  span{
+    margin-right: 10px;
+  }
 }
 </style>

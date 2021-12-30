@@ -25,7 +25,10 @@ import {
     Tooltip,
     Pagination,
     Dialog,
-    MessageBox
+    MessageBox,
+    Tag,
+    Tree,
+    Option,
 } from 'element-ui';
 
 
@@ -33,6 +36,7 @@ import {
 // 安装@babel/preset-env 将.babelrc的配置es2015  改成 @babel/preset-env 即可。......
 Vue.use(Button)
 Vue.use(Select)
+Vue.use(Option)
 Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Input)
@@ -55,6 +59,8 @@ Vue.use(Switch)
 Vue.use(Tooltip)
 Vue.use(Pagination)
 Vue.use(Dialog)
+Vue.use(Tag)
+Vue.use(Tree)
 
 
 Vue.prototype.$message = Message
