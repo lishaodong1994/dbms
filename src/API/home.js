@@ -35,3 +35,12 @@ export const G_getUserRoleDataById = (uid)=>http.get(`/roles/${uid}`)
 export const P_eidtUserRole = (roleMsg)=>http.put('/roles/'+roleMsg.roleId,roleMsg)
 //角色管理->删除角色
 export const D_delUserRole = (id)=>http.delete('/roles/'+id)
+
+// 请求商品分类数据列表
+export const G_getcategoriesList = (queryInfoObj)=>http.get('/categories',{params:queryInfoObj})
+// 添加商品分类
+export const P_addCategories = (addcateInfo)=>http.post('/categories',addcateInfo)
+// 编辑提交分类
+export const P_editCategories = (editInfo)=>http.put(`/categories/${editInfo.cat_id}`,editInfo)
+// 删除分类
+export const D_deleteCategories = (cateId) => http.delete(`/categories/${cateId}`)

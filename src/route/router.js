@@ -11,19 +11,27 @@ const Welcome = ()=>import('@/pages/Welcome.vue')
 const Users = ()=>import('@/pages/Users.vue')
 const Rights = ()=>import('@/pages/Rights.vue')
 const Roles = ()=>import('@/pages/Roles.vue')
+const Goods = ()=>import('@/pages/Goods.vue')
+const Params = ()=>import('@/pages/Params.vue')
+const Categories = ()=>import('@/pages/Categories.vue')
+const TreeTable = ()=>import('@/pages/TreeTable.vue')
 
 Vue.use(VueRouter)
 
 const routes = [
     { path: '/', redirect:'/login' },
     { path: '/login', component: Login },
+    { path: '/treetable', component: TreeTable },
     {
          path: '/home', component: Home,redirect:'/welcome' ,
          children:[
              {path:'/welcome',component:Welcome},
              {path:'/users',component:Users},
              {path:'/rights',component:Rights},
-             {path:'/roles',component:Roles}
+             {path:'/roles',component:Roles},
+             {path:'/goods',component:Goods},
+             {path:'/params',component:Params},
+             {path:'/categories',component:Categories},
          ]
     },
 ]
