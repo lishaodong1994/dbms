@@ -162,13 +162,16 @@ export default {
             { min: 1, max: 5, message: '长度在 1 到 5 个字符', trigger: 'blur' }
         ],
       },
-      editCurrentCateRow:{}
+      editCurrentCateRow:{},
     }
   },
   mounted() {
     this.getcategoriesList()
   },
   methods: {
+    showScope(s){
+      console.log(s);
+    },
    async getcategoriesList() {
       const { data, meta } = await G_getcategoriesList(this.queryInfo)
       if(meta.status!==200){return this.$message.error('获取数据失败')}

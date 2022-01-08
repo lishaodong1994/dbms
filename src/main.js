@@ -8,7 +8,10 @@ import axios from 'axios'
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 
+// import store from './store'
+
 new Vue({
+  // store,
   render: h => h(App),
   router,
 }).$mount('#app')

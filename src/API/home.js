@@ -1,5 +1,6 @@
 import http from '@/util/http.js'
 
+
 // 登陆页->登陆请求
 export const P_login =(loginData)=> http.post('/login',loginData)
 //主页-> 获取侧边栏的菜单：
@@ -44,3 +45,11 @@ export const P_addCategories = (addcateInfo)=>http.post('/categories',addcateInf
 export const P_editCategories = (editInfo)=>http.put(`/categories/${editInfo.cat_id}`,editInfo)
 // 删除分类
 export const D_deleteCategories = (cateId) => http.delete(`/categories/${cateId}`)
+// 根据所选分类的ID和当前所处的面板获取对应的参数
+export const G_getCateParams = (cateId,query)=>http.get(`categories/${cateId}/attributes`,{params:query})
+// 添加动态参数或静态属性
+export const P_addParams = (cateId,attr_name,attr_sel) =>http.post(`/categories/${cateId}/attributes`,{attr_name,attr_sel})
+// 编辑提交参数
+export const P_editParams = (id,attrId,queryObj) => http.put(`categories/${id}/attributes/${attrId}`,queryObj)
+// 删除参数
+export const D_delParams = (id,attr_id)=>http.delete(`categories/${id}/attributes/${attr_id}`) 

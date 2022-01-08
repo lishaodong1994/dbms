@@ -29,7 +29,10 @@ import {
     Tag,
     Tree,
     Option,
-    Cascader
+    Cascader,
+    Alert,
+    Tabs,
+    TabPane
 } from 'element-ui';
 
 // 第三方组件vue-table-with-tree-grid
@@ -66,6 +69,9 @@ Vue.use(Pagination)
 Vue.use(Dialog)
 Vue.use(Tag)
 Vue.use(Tree)
+Vue.use(Alert)
+Vue.use(Tabs)
+Vue.use(TabPane)
 
 
 Vue.prototype.$message = Message
