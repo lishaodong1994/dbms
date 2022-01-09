@@ -243,6 +243,7 @@ export default {
             this.goodsForm.attrs.push(newInfo)
           })
           cloneForm.attrs = this.goodsForm.attrs
+          //aaaaaaaaaaaaaaaaaaaaa
         })
       }
   },
