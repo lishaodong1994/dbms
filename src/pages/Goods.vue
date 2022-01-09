@@ -7,258 +7,151 @@
       <el-breadcrumb-item>商品列表</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card class="box-card">
-      <el-row>
-        <el-col :span="6">
-          <el-button type="primary" @click="addCateEvent">添加分类</el-button>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-input
+            placeholder="请输入内容"
+            v-model="queryInfo.query"
+            class="input-with-select"
+            clearable
+            @clear="getGoodsList"
+          >
+            <el-button slot="append" icon="el-icon-search" @click="getGoodsList"></el-button>
+          </el-input>
+        </el-col>
+        <el-col :span="5">
+          <el-button type="primary" @click="$router.push('/goods/add')">添加商品</el-button>
         </el-col>
       </el-row>
-      <!-- 树表格 本次使用vue-table-with-tree-grid 第三方组件npm i vue-table-with-tre e-grid -S -->
-      <zk-table
-        :data="categoriesList"
-        :columns="categoriesListColumns"
-        :selection-type="false"
-        :expand-type="false"
-        :show-index = "true"
-        :index-text= "'#'"
-        border
-      >
-        <template slot="aaa" slot-scope="scope">
-        <i class="el-icon-success" :style="{color:'green'}" v-if="!scope.row.cat_deleted"></i>
-        <i class="el-icon-circle-close" :style="{color:'red'}" v-if="scope.row.cat_deleted"></i>
-      </template>
-       <template slot="bbb" slot-scope="scope">
-        <el-tag type="success" v-if="scope.row.cat_level===0">一级</el-tag>
-        <el-tag type="warning" v-else-if="scope.row.cat_level===1">二级</el-tag>
-        <el-tag type="danger" v-else>三级</el-tag>
-      </template>
-       <template slot="ccc" slot-scope="scope">
-        <el-button type="primary" icon="el-icon-edit" size="mini" @click="editCate(scope.row)">编辑</el-button>
-        <el-button type="danger" icon="el-icon-delete" size="mini"  @click="deleteCate(scope.row)" >删除</el-button>
-      </template>
-      </zk-table>
-      <!-- 分页 -->
+      <el-table :data="goodsList" style="width: 100%" border>
+        <el-table-column width="35" label="#">
+          <template slot-scope="scope">
+            {{ scope.$index + 1 }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="goods_name"
+          label="商品名称"
+          width="515px"
+        ></el-table-column>
+        <el-table-column
+          prop="goods_price"
+          label="商品价格（元）"
+          width="120px"
+        ></el-table-column>
+        <el-table-column
+          prop="goods_weight"
+          label="商品重量"
+          width="120px"
+        ></el-table-column>
+        <el-table-column
+          label="创建时间"
+          width="140px"
+        >
+          <template slot-scope="scope">
+            {{scope.row.upd_time|dataFormat}}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <!-- 操作-修改按钮 -->
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              size="mini"
+              @click="editGoods(scope)"
+            ></el-button>
+            <!-- 操作-删除按钮 -->
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="delGoods(scope.row)"
+            ></el-button>
+          </template>
+        </el-table-column>
+      </el-table>
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="queryInfo.pagenum"
+        :page-sizes="[3,5,8,10]"
         :page-size="queryInfo.pagesize"
-        :page-sizes="[3, 6, 9, 12]"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
       >
       </el-pagination>
     </el-card>
-    <!-- 添加分类对话框 -->
-    <el-dialog
-      title="添加分类"
-      :visible.sync="AddCateDialogVisible"
-      width="50%"
-      @close="AddCateDialogclosed"
-    >
-      <el-form ref="addCateForm" :model="addCateFormInfo" :rules="addCateFormRules" label-width="80px">
-        <el-form-item label="分类名称" prop="cat_name" >
-          <el-input v-model="addCateFormInfo.cat_name"></el-input>
-        </el-form-item>
-        <el-form-item label="父级分类">
-           <el-cascader
-             :style="{width:'100%'}"
-             v-model="selectedKeys"
-            :options="parentCategoriesList"
-            :props="categoriesProps"
-            @change="parentCateChanged"
-            expand-trigger="hover"
-            clearable
-           >
-          </el-cascader>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="AddCateDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="defineAddCate">确 定</el-button>
-      </span>
-    </el-dialog>
-    <!-- 编辑分类对话框 -->
-    <el-dialog
-      title="编辑分类"
-      :visible.sync="editCateDialogVisible"
-      width="50%"
-    >
-      <el-form ref="editCateForm" :model="editCateFormInfo" :rules="editCateFormRules" label-width="80px">
-        <el-form-item label="分类名称" prop="cat_name" >
-          <el-input v-model="editCateFormInfo.cat_name"></el-input>
-        </el-form-item>
-      </el-form>
-       <span slot="footer" class="dialog-footer">
-        <el-button @click="editCateDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="defineEditCate">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import { G_getcategoriesList,P_addCategories,P_editCategories,D_deleteCategories} from '@/API/home.js'
+import { G_getGoodsList,D_delGoods} from '@/API/home'
+import moment from 'moment'
+import Vue from 'vue'
+Vue.filter('dataFormat',function(originVal){
+  // const dt = new Date(originVal)
+  // const y = dt.getFullYear()
+  // const m = (dt.getMonth()+1+'').padStart(2,'0')
+  // const d = (dt.getDate()+'').padStart(2,'0')
+  // const hh = (dt.getHours()+'').padStart(2,'0')
+  // const mm = (dt.getMinutes()+'').padStart(2,'0')
+  // const ss = (dt.getSeconds()+'').padStart(2,'0')
+  // return `${y}-${m}-${d} ${hh}:${mm}:${ss}` 
+  return moment(originVal).format('YYYY-MM-DD hh:mm:ss')
+})
 export default {
   data() {
     return {
-      categoriesList: [],
-      categoriesListColumns:[
-        {
-          label:'分类名称',
-          prop:'cat_name'
-        },
-         {
-          label:'是否有效',
-          type:'template',
-          template:'aaa'
-        },
-        {
-          label:'标签级别',
-          type:'template',
-          template:'bbb'
-        },
-         {
-          label:'操作',
-          width:'200px',
-          type:'template',
-          template:'ccc'
-        },
-        
-      ],
+      queryInfo: {
+        query: '',
+        pagenum: 1,
+        pagesize: 8,
+      },
+      goodsList: [],
       total:0,
-      queryInfo:{
-        type:3,
-        pagenum:1,
-        pagesize:3
-      },
-      AddCateDialogVisible:false,
-      addCateFormInfo:{
-        cat_name:'',
-        cat_pid:0,
-        cat_level:0
-      },
-      addCateFormRules:{
-        cat_name: [
-            { required: true, message: '请输入分类名称', trigger: 'blur' },
-            { min: 1, max: 5, message: '长度在 1 到 5 个字符', trigger: 'blur' }
-        ],
-      },
-      selectedKeys:[],
-      parentCategoriesList:[],
-      categoriesProps:{
-          value:'cat_id',
-          label:'cat_name',
-          children:'children',
-          checkStrictly:true,//联级select默认只能选中最后一级。设置为true可以选任意级。
-      },
-      editCateDialogVisible:false,
-      editCateFormInfo:{
-        cat_id:'',
-        cat_name:''
-      },
-      editCateFormRules:{
-        cat_name: [
-            { required: true, message: '请输入分类名称', trigger: 'blur' },
-            { min: 1, max: 5, message: '长度在 1 到 5 个字符', trigger: 'blur' }
-        ],
-      },
-      editCurrentCateRow:{},
     }
   },
   mounted() {
-    this.getcategoriesList()
+    this.getGoodsList()
   },
   methods: {
-    showScope(s){
-      console.log(s);
+    async getGoodsList() {
+      const { data, meta } = await G_getGoodsList(this.queryInfo)
+      console.log(data, meta)
+      if (meta.status !== 200) {
+        return this.$message.error('获取商品列表失败')
+      }
+      this.goodsList = data.goods
+      this.total=data.total
     },
-   async getcategoriesList() {
-      const { data, meta } = await G_getcategoriesList(this.queryInfo)
-      if(meta.status!==200){return this.$message.error('获取数据失败')}
-      this.categoriesList = data.result || data
-      this.total = data.total
+    editGoods(scope) {
+      console.log(scope)
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
-      this.queryInfo.pagesize = val
-      this.getcategoriesList()
+      this.queryInfo.pagesize = val-0
+      this.getGoodsList()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
-      this.queryInfo.pagenum = val
-      this.getcategoriesList()
+      this.queryInfo.pagenum=val-0
+      this.getGoodsList()
     },
-    async addCateEvent(){
-      const {data,meta} = await G_getcategoriesList({type:2})
-      if(meta.status!==200){return this.$message.error('获取父级分类失败')}
-      this.parentCategoriesList = data
-      this.AddCateDialogVisible=true
-    },
-    parentCateChanged(){
-      if(this.selectedKeys.length>0){
-        this.addCateFormInfo.cat_pid = this.selectedKeys[this.selectedKeys.length-1]
-        this.addCateFormInfo.cat_level = this.selectedKeys.length
-      }else{
-        this.addCateFormInfo.cat_pid = 0
-        this.addCateFormInfo.cat_level = 0
-      }
-    },
-      defineAddCate(){
-       this.$refs.addCateForm.validate(async(valid)=>{
-          if(!valid){return}
-          const {data,meta} = await P_addCategories(this.addCateFormInfo)
-          if(meta.status!==201){return this.$message.error('添加商品类别失败')}
-          this.$message.success('添加商品类别成功')
-          this.getcategoriesList()
-          this.AddCateDialogVisible = false
-       })
-      },
-    AddCateDialogclosed(){
-      this.$refs.addCateForm.resetFields()
-      this.selectedKeys=[]
-      this.addCateFormInfo.cat_pid = 0
-      this.addCateFormInfo.cat_level = 0
-    },
-    editCate(cateRow){
-      this.editCateFormInfo.cat_id = cateRow.cat_id;  
-      this.editCateFormInfo.cat_name = cateRow.cat_name;  
-      this.editCurrentCateRow = cateRow
-      this.editCateDialogVisible = true
-    },
-    defineEditCate(){
-      this.$refs.editCateForm.validate(async(valid)=>{
-          if(!valid){return}
-          const {data,meta} = await P_editCategories(this.editCateFormInfo)
-          if(meta.status!==200){return this.$message.error('类别更新失败')}
-          this.$message.success('类别更新成功')
-          this.$set(this.editCurrentCateRow,'cat_name',data.cat_name)
-          this.$forceUpdate();
-          this.editCateDialogVisible = false
-          // 留了一个问题没解决：
-          // 为了不刷新页面导致表格收回，这里用了$set想局部刷一下页面数据渲染没效果，又用了$forceUpdate()强制渲染还是没效果。
-          // 最终还是不得不请求了后端整体表格数据，渲染了一次页面。
-          this.getcategoriesList()
-      })
-    },
-    deleteCate(cateRow){
-       this.$confirm('此操作将删除该分类, 是否继续?', '提示', {
+     delGoods(row){
+      this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(async() => {
-          const {data,meta} = await D_deleteCategories(cateRow.cat_id)
-          if(meta.status!==200){return this.$message.error('删除失败')}
-          this.$message({type: 'success',message: '删除成功!'});
-          this.getcategoriesList()
-        }).catch(() => {
-          this.$message({type: 'info', message: '已取消删除'});          
-        });
-      
+          const {data,meta} = await D_delGoods(row.goods_id)
+          if(meta.status!==200){return this.$message.error('删除商品失败')}
+          this.$message.success('删除商品成功')
+          this.getGoodsList()
+        }).catch(() => { this.$message({type: 'info',message: '已取消删除'}) });
+  
     }
   },
 }
 </script>
 
-<style lang="less" scoped >
-
+<style>
 </style>

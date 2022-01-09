@@ -53,3 +53,8 @@ export const P_addParams = (cateId,attr_name,attr_sel) =>http.post(`/categories/
 export const P_editParams = (id,attrId,queryObj) => http.put(`categories/${id}/attributes/${attrId}`,queryObj)
 // 删除参数
 export const D_delParams = (id,attr_id)=>http.delete(`categories/${id}/attributes/${attr_id}`) 
+
+//获取商品列表
+export const G_getGoodsList = (queryObj)=>http.get('/goods',{params:queryObj})
+// 删除商品
+export const D_delGoods= (id) =>http.delete(`/goods/${id}`)

@@ -15,6 +15,7 @@ const Goods = ()=>import('@/pages/Goods.vue')
 const Params = ()=>import('@/pages/Params.vue')
 const Categories = ()=>import('@/pages/Categories.vue')
 const TreeTable = ()=>import('@/pages/TreeTable.vue')
+const GoodsAdd = ()=>import('@/pages/GoodsAdd.vue')
 
 Vue.use(VueRouter)
 
@@ -32,6 +33,7 @@ const routes = [
              {path:'/goods',component:Goods},
              {path:'/params',component:Params},
              {path:'/categories',component:Categories},
+             {path:'/goods/add',component:GoodsAdd},
          ]
     },
 ]
