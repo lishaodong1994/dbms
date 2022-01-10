@@ -116,7 +116,7 @@
 </template>
 
 <script>
-import { G_getcategoriesList, G_getCateParams } from '@/API/home'
+import { G_getcategoriesList, G_getCateParams,P_addGoods } from '@/API/home'
 import _ from 'lodash'
 export default {
   data() {
@@ -229,7 +229,7 @@ export default {
         this.goodsForm.pics.push(picInfo)
       },
       addGoods(){
-        this.$refs.goodsFormRef.validate(valid=>{
+        this.$refs.goodsFormRef.validate(async(valid)=>{
           if(!valid){return this.$message.error('必填项需要补充')}
           const cloneForm = _.cloneDeep(this.goodsForm)
           cloneForm.goods_cat = cloneForm.goods_cat.join(',')
@@ -243,7 +243,10 @@ export default {
             this.goodsForm.attrs.push(newInfo)
           })
           cloneForm.attrs = this.goodsForm.attrs
-          //aaaaaaaaaaaaaaaaaaaaa
+          const {data,meta} = await P_addGoods(cloneForm)
+          if(meta.status!==201){return this.$message.error('添加商品失败')}
+          this.$message.success('添加商品成功')
+          this.$router.push('/goods')
         })
       }
   },

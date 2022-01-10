@@ -58,3 +58,5 @@ export const D_delParams = (id,attr_id)=>http.delete(`categories/${id}/attribute
 export const G_getGoodsList = (queryObj)=>http.get('/goods',{params:queryObj})
 // 删除商品
 export const D_delGoods= (id) =>http.delete(`/goods/${id}`)
+//添加商品
+export const P_addGoods = (form )=>http.post(`goods`,form)
