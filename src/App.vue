@@ -16,5 +16,7 @@ export default {
 </script>
 
 <style>
-
+.el-loading-mask{
+  background-color: transparent !important;
+}
 </style>

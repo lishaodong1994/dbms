@@ -126,7 +126,7 @@ export default {
       this.total=data.total
     },
     editGoods(scope) {
-      console.log(scope)
+     this.$router.push({path:'/goods/edit',  query: {id: scope.row.goods_id}}) 
     },
     handleSizeChange(val) {
       this.queryInfo.pagesize = val-0

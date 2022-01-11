@@ -1,5 +1,10 @@
 import http from '@/util/http.js'
-
+import axios from 'axios'
+const MOCKhttp = axios.create({
+    baseURL: 'https://www.fastmock.site/mock/0d94b59864be14ac23ec2739a630ec50/test1',
+    timeout: 3000,
+    //headers:''
+})
 
 // 登陆页->登陆请求
 export const P_login =(loginData)=> http.post('/login',loginData)
@@ -56,7 +61,20 @@ export const D_delParams = (id,attr_id)=>http.delete(`categories/${id}/attribute
 
 //获取商品列表
 export const G_getGoodsList = (queryObj)=>http.get('/goods',{params:queryObj})
+//根据ID查询商品信息
+export const G_getGoodsInfo = (id) => http.get(`goods/${id}`)  
 // 删除商品
 export const D_delGoods= (id) =>http.delete(`/goods/${id}`)
 //添加商品
 export const P_addGoods = (form )=>http.post(`goods`,form)
+// 修改商品
+export const P_editGoods = (id,form )=>http.put(`goods/${id}`,form)
+
+// 获取订单列表
+export const G_getOrdersList =(queryObj)=>http.get(`orders`,{params:queryObj})
+
+// 获取物流信息
+export const G_getWuLiuList =()=>MOCKhttp.get(`/kuaidi/1106975712662`)
+
+// 获取图标信息
+export const G_getReport = ()=>http.get(`/reports/type/1`)

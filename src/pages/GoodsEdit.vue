@@ -4,7 +4,7 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>商品管理</el-breadcrumb-item>
-      <el-breadcrumb-item>添加商品</el-breadcrumb-item>
+      <el-breadcrumb-item>修改商品</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
       <el-alert title="添加商品信息" type="info" center show-icon> </el-alert>
@@ -59,6 +59,8 @@
                 :props="goodsCatCascaderProps"
                 style="width: 100%"
                 clearable
+                :value="goodsForm.goods_cat"
+                
               >
               </el-cascader>
             </el-form-item>
@@ -104,7 +106,7 @@
           <el-tab-pane label="商品内容" name="4">
             <!-- 富文本编辑器 npm install vue-quill-editor --save  -->
             <quill-editor v-model="goodsForm.goods_introduce"></quill-editor>
-            <el-button type="primary" @click="addGoods">添加商品</el-button>
+            <el-button type="primary" @click="editGoods">修改商品</el-button>
           </el-tab-pane>
         </el-tabs>
       </el-form>
@@ -116,7 +118,7 @@
 </template>
 
 <script>
-import { G_getcategoriesList, G_getCateParams,P_addGoods } from '@/API/home'
+import { G_getcategoriesList, G_getCateParams,P_addGoods ,G_getGoodsInfo,P_editGoods} from '@/API/home'
 import _ from 'lodash'
 export default {
   data() {
@@ -166,7 +168,8 @@ export default {
     }
   },
   mounted() {
-    this.getGoodsCatCascaderOptions()
+    
+    this.getPrvGoodsInfo()
   },
   computed: {
     cateId() {
@@ -228,7 +231,7 @@ export default {
         const picInfo = {pic:response.data.tmp_path}
         this.goodsForm.pics.push(picInfo)
       },
-      addGoods(){
+      editGoods(){
         this.$refs.goodsFormRef.validate(async(valid)=>{
           if(!valid){return this.$message.error('必填项需要补充')}
           const cloneForm = _.cloneDeep(this.goodsForm)
@@ -243,11 +246,19 @@ export default {
             this.goodsForm.attrs.push(newInfo)
           })
           cloneForm.attrs = this.goodsForm.attrs
-          const {data,meta} = await P_addGoods(cloneForm)
-          if(meta.status!==201){return this.$message.error('添加商品失败')}
-          this.$message.success('添加商品成功')
+          const {data,meta} = await P_editGoods(this.$route.query.id,cloneForm)
+          if(meta.status!==200){return this.$message.error('修改商品失败')}
+          this.$message.success('修改商品成功')
           this.$router.push('/goods')
         })
+      },
+      async getPrvGoodsInfo(){
+       this.getGoodsCatCascaderOptions()
+       const {data,meta} = await G_getGoodsInfo(this.$route.query.id)
+       if(meta.status!==200){ return this.$message.error('获取商品信息失败')}
+       this.goodsForm={...this.goodsForm,...data}
+       console.log(data.goods_cat.split(',').map(item=>{return item-0})); 
+       this.goodsForm.goods_cat=data.goods_cat.split(',').map(item=>{return item-0})
       }
   },
 }

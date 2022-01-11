@@ -16,6 +16,9 @@ const Params = ()=>import('@/pages/Params.vue')
 const Categories = ()=>import('@/pages/Categories.vue')
 const TreeTable = ()=>import('@/pages/TreeTable.vue')
 const GoodsAdd = ()=>import('@/pages/GoodsAdd.vue')
+const GoodsEdit = ()=>import('@/pages/GoodsEdit.vue')
+const Orders = ()=>import('@/pages/Orders.vue')
+const Reports = ()=>import('@/pages/Reports.vue')
 
 Vue.use(VueRouter)
 
@@ -34,6 +37,9 @@ const routes = [
              {path:'/params',component:Params},
              {path:'/categories',component:Categories},
              {path:'/goods/add',component:GoodsAdd},
+             {path:'/goods/edit',component:GoodsEdit},
+             {path:'/orders',component:Orders},
+             {path:'/reports',component:Reports},
          ]
     },
 ]
@@ -43,7 +49,7 @@ const router = new VueRouter({
 })
 // 前置路由拦截：除了login随便等，其他则需要登陆（要有token）才给进入。
 router.beforeEach((to,from,next)=>{
-    if(to.path==='/login'){return next()};
+    if(to.path==='/login'){return next()}
     const tokenStr = window.sessionStorage.getItem('token')
     if(!tokenStr){return next('/login')}
     next()
